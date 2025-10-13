@@ -1,24 +1,28 @@
-const express = require('express')
-const cors = require('cors')
-require('dotenv').config()
+import express from "express";
+import cors from "cors";
 
-const leadsRouter = require('./routes/leads')
+const app = express();
+app.use(cors());
+app.use(express.json());
 
-const app = express()
-app.use(cors()) // allow requests from frontend
-app.use(express.json())
+// In-memory storage for leads
+const leads = [];
 
-// Mount leads routes
-app.use('/api/v1/leads', leadsRouter)
-
-const port = process.env.PORT || 5000
+// GET all leads
 app.get("/api/v1/leads", (req, res) => {
-  res.json({ message: "Lead endpoint working properly!" });
+  res.json(leads);
 });
 
-app.listen(port, () => console.log(`Backend running on port ${port}`))
-```js
-app.get("/api/v1/leads", (req, res) => {
-  res.json({ message: "Lead endpoint working properly!" });
+// POST a new lead
+app.post("/api/v1/leads", (req, res) => {
+  const { name, email, phone, notes } = req.body;
+  if (!name || !email || !phone) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+  const newLead = { id: leads.length + 1, name, email, phone, notes };
+  leads.push(newLead);
+  res.status(201).json({ message: "Lead submitted successfully", lead: newLead });
 });
-Add test endpoint for leads
+
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
