@@ -13,3 +13,7 @@ app.use('/api/v1/leads', leadsRouter)
 
 const port = process.env.PORT || 5000
 app.listen(port, () => console.log(`Backend running on port ${port}`))
+```js
+app.get("/api/v1/leads", (req, res) => {
+  res.json({ message: "Lead endpoint working properly!" });
+});
