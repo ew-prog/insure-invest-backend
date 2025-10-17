@@ -1,28 +1,39 @@
-import express from "express";
-import cors from "cors";
+const express = require("express")
+const cors = require("cors")
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+const app = express()
 
-// In-memory storage for leads
-const leads = [];
+// ✅ Middleware
+app.use(cors()) // Allow requests from all origins (frontend)
+app.use(express.json()) // Parse JSON request bodies
 
-// GET all leads
+// ✅ Root route
+app.get("/", (req, res) => {
+  res.send("✅ InsureInvest Backend is running successfully!")
+})
+
+// ✅ Leads API route
+// Replace this with your database connection or in-memory array
+let leads = [
+  { name: "Eddy", email: "ewanyama@gmail.com", phone: "0774905936" },
+]
+
 app.get("/api/v1/leads", (req, res) => {
-  res.json(leads);
-});
+  res.json(leads)
+})
 
-// POST a new lead
 app.post("/api/v1/leads", (req, res) => {
-  const { name, email, phone, notes } = req.body;
+  const { name, email, phone } = req.body
   if (!name || !email || !phone) {
-    return res.status(400).json({ error: "Missing required fields" });
+    return res.status(400).json({ message: "All fields are required" })
   }
-  const newLead = { id: leads.length + 1, name, email, phone, notes };
-  leads.push(newLead);
-  res.status(201).json({ message: "Lead submitted successfully", lead: newLead });
-});
+  const newLead = { name, email, phone }
+  leads.push(newLead)
+  res.status(201).json(newLead)
+})
 
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// ✅ Start server
+const PORT = process.env.PORT || 5000
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
